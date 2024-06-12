@@ -1,33 +1,34 @@
-package com.vasiliskardaras.security.config.security.authentication;
+package com.vasiliskardaras.security.config.authentication;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.security.auth.Subject;
 import java.util.Collection;
 
-public class CustomAuthentication implements Authentication {
+public class ApiKeyAuthentication implements Authentication {
 
-    private final boolean authentication;
     private final String key;
+    private boolean authenticated;
 
-    public CustomAuthentication(boolean authentication, String key) {
-        this.authentication = authentication;
+    public ApiKeyAuthentication(String key) {
         this.key = key;
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    @Override
+    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+        this.authenticated = isAuthenticated;
     }
 
     public String getKey() {
         return key;
     }
 
-    @Override
-    public boolean isAuthenticated() {
-        return authentication;
-    }
-
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -51,5 +52,10 @@ public class CustomAuthentication implements Authentication {
     @Override
     public String getName() {
         return null;
+    }
+
+    @Override
+    public boolean implies(Subject subject) {
+        return Authentication.super.implies(subject);
     }
 }
