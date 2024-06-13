@@ -2,6 +2,7 @@ package com.vasiliskardaras.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +13,10 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+// @PreAuthorize @PostAuthorize @PreFilter @PostFilter
+// @Secured
+// @RolsAllowd
 public class SecurityConfig {
 
     @Bean
@@ -19,12 +24,7 @@ public class SecurityConfig {
         return http.httpBasic()
                 .and()
                 .authorizeRequests()
-//                    .anyRequest().authenticated() // endpoint level authorization
-//                .anyRequest().permitAll()
-//                .anyRequest().hasAuthority("read")
-//                .anyRequest().hasAnyAuthority("read", "write")
-//                .anyRequest().access("isAuthenticated() and hasAuthority('read')") // SpEL --> authorization rules
-                .requestMatchers("/demo").hasAuthority("read")
+                .anyRequest().authenticated()
                 .and().build();
 
 
@@ -37,12 +37,12 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         var uds = new InMemoryUserDetailsManager();
 
-        var u1 = User.withUsername("bill")
+        var u1 = User.withUsername("john")
                 .password(passwordEncoder().encode("12345"))
                 .authorities("read")
                 .build();
 
-        var u2 = User.withUsername("john")
+        var u2 = User.withUsername("bill")
                 .password(passwordEncoder().encode("12345"))
                 .authorities("write")
                 .build();
