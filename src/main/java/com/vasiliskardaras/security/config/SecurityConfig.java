@@ -2,6 +2,7 @@ package com.vasiliskardaras.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,18 +20,15 @@ public class SecurityConfig {
         return http.httpBasic()
                 .and()
                 .authorizeRequests()
-//                    .anyRequest().authenticated() // endpoint level authorization
-//                .anyRequest().permitAll()
-//                .anyRequest().hasAuthority("read")
-//                .anyRequest().hasAnyAuthority("read", "write")
-//                .anyRequest().access("isAuthenticated() and hasAuthority('read')") // SpEL --> authorization rules
-                .requestMatchers("/demo").hasAuthority("read")
-                .and().build();
+//                .requestMatchers("/demo/**").hasAuthority("read")  // find ANT expressions  /**
+                .requestMatchers(HttpMethod.GET, "/demo/**").hasAuthority("read")
+                .anyRequest().authenticated()
+                .and().csrf().disable()     // DON'T DO THIS IN REAL-WORLD APPS
+                .build();
 
 
-        // mathcer method + authorization rule
-        // 1. which matcher methods should you use and how ( anyRequest(), mvcMatchers(), antMatchers(), regexMatchers() )
-        // 2. how to apply different authorization rules
+        // /demo/anything/*/something  --->  /demo/anything/abc/something
+        //                             --->  /demo/anything/xyz/something
     }
 
     @Bean
